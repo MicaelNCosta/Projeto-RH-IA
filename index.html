@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RH Digital - Plataforma de Triagem Inteligente</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 500: '#6366f1', 600: '#4f46e5' }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white transition-colors duration-300">
+
+    <!-- Cabeçalho -->
+    <header class="border-b border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/60 backdrop-blur-md sticky top-0 z-40 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-brain text-white text-sm"></i>
+                </div>
+                <span class="font-bold text-lg tracking-tight">RH <span class="text-indigo-600 dark:text-indigo-400">Digital</span></span>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="text-xs px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/50 flex items-center gap-2 transition-colors">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Servidor Ativo</span>
+                </div>
+                <!-- Botão Tema Claro/Escuro -->
+                <button onclick="toggleTheme()" class="w-9 h-9 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer">
+                    <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="max-w-5xl mx-auto px-6 py-10 w-full flex-grow">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-extrabold tracking-tight mb-2">Triagem Inteligente de Currículos</h1>
+            <p class="text-zinc-600 dark:text-zinc-400 text-sm max-w-xl mx-auto">Insira os requisitos da vaga e envie o currículo em PDF para análise instantânea baseada em IA.</p>
+        </div>
+
+        <form id="formAvaliacao" class="space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                
+                <!-- Bloco 1: Contexto da Vaga -->
+<div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 flex flex-col shadow-xl min-h-[260px] transition-colors duration-300">
+    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
+        <i class="fa-solid fa-clipboard-list text-indigo-500 dark:text-indigo-400 mr-2"></i> Descrição e Requisitos da Vaga
+    </label>
+    <textarea id="contextoVaga" required rows="7" 
+        class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 text-sm text-zinc-800 dark:text-zinc-200 placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:border-indigo-500 transition-colors resize-none flex-grow"
+        placeholder="Ex: Vaga para Analista de Processos. Requisitos: Experiência com mapeamento BPMN, metodologias ágeis (Scrum), análise de KPIs e otimização de fluxos operacionais..."></textarea>
+</div>
+
+                <!-- Bloco 2: Upload de Currículo -->
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 flex flex-col shadow-xl min-h-[260px] justify-between transition-colors duration-300">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
+                            <i class="fa-solid fa-file-pdf text-indigo-500 dark:text-indigo-400 mr-2"></i> Currículo do Candidato (PDF)
+                        </label>
+                        <div class="border-2 border-dashed border-zinc-300 dark:border-zinc-800 hover:border-indigo-500/50 rounded-xl p-6 text-center cursor-pointer transition-colors bg-zinc-50 dark:bg-zinc-950/50 relative flex flex-col items-center justify-center min-h-[170px]">
+                            <input type="file" id="curriculoFile" accept="application/pdf" required class="absolute inset-0 opacity-0 cursor-pointer">
+                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-indigo-500 dark:text-indigo-400 mb-3"></i>
+                            <span id="fileName" class="text-sm text-zinc-700 dark:text-zinc-300 font-medium">Clique para carregar ou arraste o PDF</span>
+                            <span class="text-xs text-zinc-400 dark:text-zinc-500 mt-1">Apenas formato PDF estruturado</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Botão de Ação -->
+            <div class="flex justify-center pt-2">
+                <button type="submit" id="btnSubmit" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium px-10 py-4 rounded-xl shadow-lg shadow-indigo-600/25 transition transform active:scale-95 flex items-center gap-3 text-sm min-w-[280px] justify-center cursor-pointer">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Iniciar Análise com IA</span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Área de Resultados -->
+        <div id="resultadoContainer" class="mt-12 hidden space-y-6">
+            <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-2xl transition-colors duration-300">
+                <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-zinc-800 dark:text-zinc-200">
+                    <i class="fa-solid fa-square-poll-vertical text-indigo-500 dark:text-indigo-400"></i> Parecer da IA
+                </h3>
+                <div id="resultadoConteudo" class="space-y-4 text-sm text-zinc-700 dark:text-zinc-300">
+                    <!-- Preenchido via script -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Botão Flutuante (FAB) para Apresentação / Modo Demonstração -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <div id="demoPanel" class="hidden mb-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-4 shadow-2xl w-72 backdrop-blur-md transition-colors">
+            <p class="text-xs font-bold text-indigo-600 dark:text-indigo-400 mb-3 flex items-center justify-between">
+                <span><i class="fa-solid fa-shield-halved mr-1"></i> Modo Apresentação (Backup)</span>
+                <button onclick="toggleDemoPanel()" class="text-zinc-500 hover:text-zinc-800 dark:hover:text-white">&times;</button>
+            </p>
+            <div class="space-y-2">
+                <button onclick="simularDemo('aprovado')" class="w-full text-left text-xs bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300 p-2 rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-check text-emerald-600 dark:text-emerald-400"></i> Simular Aprovado
+                </button>
+                <button onclick="simularDemo('reprovado')" class="w-full text-left text-xs bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800/50 text-rose-700 dark:text-rose-300 p-2 rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-xmark text-rose-600 dark:text-rose-400"></i> Simular Reprovado (Detalhado)
+                </button>
+                <button onclick="simularDemo('invalido')" class="w-full text-left text-xs bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-800/50 text-amber-700 dark:text-amber-300 p-2 rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-600 dark:text-amber-400"></i> Simular Currículo em Branco
+                </button>
+            </div>
+        </div>
+        <button onclick="toggleDemoPanel()" class="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl hover:scale-105 transition transform flex items-center justify-center border border-indigo-400/30 cursor-pointer" title="Modo Apresentação / Contingência">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-zinc-200 dark:border-zinc-800/60 py-6 text-center text-xs text-zinc-500 transition-colors">
+        RH Digital &copy; 2026 Micael Nunes - Todos os direitos reservados.   
+    </footer>
+
+    <!-- Lógica JavaScript -->
+    <script>
+        const fileInput = document.getElementById('curriculoFile');
+        const fileNameSpan = document.getElementById('fileName');
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileNameSpan.textContent = e.target.files[0].name;
+                fileNameSpan.classList.add('text-indigo-600', 'dark:text-indigo-400', 'font-semibold');
+            }
+        });
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.className = "fa-solid fa-sun text-sm";
+            } else {
+                html.classList.add('dark');
+                icon.className = "fa-solid fa-moon text-sm";
+            }
+        }
+
+        function toggleDemoPanel() {
+            const panel = document.getElementById('demoPanel');
+            panel.classList.toggle('hidden');
+        }
+
+        // Envio real conectado ao servidor Node.js
+        document.getElementById('formAvaliacao').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('btnSubmit');
+            const container = document.getElementById('resultadoContainer');
+            const contextoVaga = document.getElementById('contextoVaga').value;
+            const arquivo = fileInput.files[0];
+
+            if (!arquivo) {
+                alert('Por favor, selecione um ficheiro PDF.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('contextoVaga', contextoVaga);
+            formData.append('curriculo', arquivo);
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i><span>A analisar currículo na IA...</span>`;
+            container.classList.add('hidden');
+
+            try {
+                const resposta = await fetch('/api/avaliar-curriculo', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(dados.erro || 'Erro ao processar');
+                }
+
+                renderizarResultado(dados);
+
+            } catch (err) {
+                alert('Erro de comunicação com o servidor local: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i><span>Iniciar Análise com IA</span>`;
+            }
+        });
+
+        function simularDemo(tipo) {
+            toggleDemoPanel();
+            let dadosMock = {};
+            
+            if (tipo === 'aprovado') {
+                dadosMock = {
+                    status: 'aprovado',
+                    mensagem: 'Parabéns! O perfil atende perfeitamente aos requisitos de gestão e otimização de processos. Escolha o melhor horário na agenda abaixo para a nossa entrevista.'
+                };
+            } else if (tipo === 'reprovado') {
+                dadosMock = {
+                    status: 'reprovado',
+                    motivos: [
+                        'Ausência de palavras-chave relacionadas com gestão de indicadores (KPIs) e mapeamento de processos.',
+                        'A experiência profissional não apresenta métricas de impacto financeiro, saving ou otimização de tempo.',
+                        'As ferramentas de gestão (ERP, modelação BPMN, Power BI) não estão destacadas adequadamente para leitura ATS.'
+                    ],
+                    dicas_melhorias: [
+                        'Crie uma secção exclusiva para "Ferramentas e Metodologias", listando softwares (Bizagi, SAP) e métodos (Lean, Scrum).',
+                        'Reescreva as experiências focando em resultados: "Reduzi os custos em [X]% ao otimizar o processo [Y]".',
+                        'Destaque certificações relevantes (ex: Green Belt, Yellow Belt, Scrum Master) logo abaixo do seu resumo.',
+                        'Padronize os nomes dos cargos para refletir a sua atuação em Processos Gerenciais.'
+                    ],
+                    modelo_curriculo: 'NOME COMPLETO DO CANDIDATO\nseuemail@dominio.com | linkedin.com/in/seuperfil | (XX) 9XXXX-XXXX\n\nRESUMO PROFISSIONAL\nAnalista de Processos Gerenciais com 5+ anos de experiência na modelação, análise e melhoria contínua de fluxos operacionais. Especialista em identificar gargalos e implementar soluções com histórico comprovado de redução de custos operacionais e aumento de eficiência (SLA) através de metodologias ágeis e análise de dados.\n\nCOMPETÊNCIAS TÉCNICAS (HARD SKILLS)\n• Mapeamento e Modelação: BPMN, Bizagi, Camunda, Visio.\n• Ferramentas & BI: Power BI, Excel Avançado, ERPs (SAP, TOTVS).\n• Metodologias: Lean Six Sigma (Green Belt), PDCA, 5S, Scrum, Matriz GUT.\n\nEXPERIÊNCIA PROFISSIONAL\nInovação Operacional S.A. — Analista de Processos Sênior\nJaneiro 2021 – Presente\n• Liderou a reestruturação do fluxo da cadeia de suprimentos, reduzindo o tempo de ciclo (lead time) em 30% e cortando custos operacionais em 15%.\n• Implementou painéis de controlo interativos no Power BI para a monitorização de KPIs em tempo real, auxiliando a diretoria na tomada de decisão.\n• Capacitou mais de 40 colaboradores em novas rotinas padronizadas (POPs), garantindo a conformidade para auditorias ISO 9001.\n\nLogística Express LTDA. — Assistente de Melhoria Contínua\nFevereiro 2018 – Dezembro 2020\n• Mapeou e documentou mais de 50 processos internos da área financeira, identificando redundâncias que pouparam cerca de 20 horas de trabalho manual por semana.\n• Participou ativamente nos comités de qualidade aplicando a ferramenta 5S e espinha de peixe (Ishikawa) para resolução de não-conformidades.\n\nFORMAÇÃO ACADÊMICA\nTecnólogo em Processos Gerenciais — Universidade [Nome da Instituição]\nConclusão em Dezembro 2017\n\nIDIOMAS\n• Inglês - Nível Avançado'
+                };
+            } else {
+                dadosMock = {
+                    status: 'invalido',
+                    mensagem: 'Não conseguimos identificar dados estruturados no documento enviado. O currículo parece estar em branco, corrompido ou contém apenas texto solto sem formatação.',
+                    sugestao: 'Recomendamos fortemente a utilização de um formato de currículo clássico (ATS-Friendly). Evite currículos em imagem, colunas duplas ou gráficos complexos. Siga rigorosamente a estrutura do guia abaixo:',
+                    modelo_curriculo: '[O SEU NOME COMPLETO AQUI]\n[seu-email@dominio.com] | [O seu LinkedIn] | [(XX) 9XXXX-XXXX] | [Sua Cidade, Estado]\n\nRESUMO PROFISSIONAL\n[Escreva um parágrafo de 3 a 5 linhas. Destaque o seu título profissional, anos de experiência, áreas de maior especialidade (ex: Otimização de Processos, Planeamento Estratégico) e o que procura agregar à empresa.]\n\nPRINCIPAIS COMPETÊNCIAS (Hard & Soft Skills)\n• Metodologias & Ferramentas: [BPMN, PDCA, Scrum, Power BI, Excel, ERP Exemplo]\n• Comportamentais: Resolução de Problemas, Visão Sistémica, Liderança de Equipas\n\nEXPERIÊNCIA PROFISSIONAL\n[Nome da Empresa] — [O Seu Cargo Exato]\n[Mês/Ano de Início] – [Mês/Ano de Fim ou "Presente"]\n• [Ação Executada]: Mapeei e otimizei o [Processo X] utilizando a ferramenta/metodologia [Y].\n• [Resultado Alcançado]: Esta melhoria resultou numa redução de [X]% nos custos ou aumento de [Y]% na produtividade da equipa.\n• [Contexto Adicional]: Definição e monitorização semanal de indicadores de desempenho (KPIs).\n\nFORMAÇÃO ACADÊMICA\nTecnólogo em Processos Gerenciais — [Nome da Instituição de Ensino]\n[Mês/Ano de Início] – [Mês/Ano de Conclusão ou Previsão]\n\nCURSOS E CERTIFICAÇÕES\n• [Ex: Certificação Green Belt / Scrum Master] — [Instituição emissora]'
+                };
+            }
+            renderizarResultado(dadosMock);
+        }
+
+        function renderizarResultado(dados) {
+            const container = document.getElementById('resultadoContainer');
+            const conteudo = document.getElementById('resultadoConteudo');
+            let html = '';
+
+            if (dados.status === 'aprovado') {
+                html = `
+                    <div class="p-5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-xl text-emerald-800 dark:text-emerald-300 transition-colors">
+                        <p class="font-bold text-base mb-2 flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-400"></i> Perfil Aprovado para a Vaga!</p>
+                        <p class="text-sm mb-4">${dados.mensagem}</p>
+                        
+                        <!-- Bloco da Agenda Embutida -->
+                        <div class="mt-4 bg-white rounded-xl overflow-hidden border border-emerald-200 dark:border-emerald-800/50 h-[600px] shadow-inner">
+                            <iframe 
+                                src="https://calendar.app.google/aVUykWN8NhX1Nbaz5" 
+                                width="100%" 
+                                height="100%" 
+                                frameborder="0" 
+                                title="Agendamento de Entrevista">
+                            </iframe>
+                        </div>
+                    </div>
+                `;
+            } else if (dados.status === 'reprovado') {
+                let motivosList = (dados.motivos || []).map(m => `<li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-rose-500 dark:text-rose-400 mt-1"></i><span>${m}</span></li>`).join('');
+                let dicasList = (dados.dicas_melhorias || []).map(d => `<li class="flex items-start gap-2"><i class="fa-solid fa-check text-indigo-600 dark:text-indigo-400 mt-1"></i><span>${d}</span></li>`).join('');
+                let modelo = dados.modelo_curriculo || 'Estrutura padrão otimizada para ATS.';
+
+                html = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50 rounded-xl text-rose-800 dark:text-rose-300 transition-colors">
+                            <p class="font-bold text-sm mb-2 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation"></i> Motivos da Reprovação</p>
+                            <ul class="space-y-1.5 text-xs text-rose-900/90 dark:text-rose-200/90">${motivosList}</ul>
+                        </div>
+                        <div class="p-4 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-700 dark:text-zinc-300 transition-colors">
+                            <p class="font-bold text-sm mb-2 text-indigo-600 dark:text-indigo-400 flex items-center gap-2"><i class="fa-solid fa-lightbulb"></i> O que Estudar & Melhorar</p>
+                            <ul class="space-y-1.5 text-xs">${dicasList}</ul>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl transition-colors">
+                        <p class="font-bold text-xs uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2"><i class="fa-solid fa-file-lines mr-1"></i> Exemplo de Currículo Ideal (Perfil Sênior)</p>
+                        <div class="bg-white dark:bg-zinc-900 p-4 rounded-lg text-xs font-mono text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800/50 select-all whitespace-pre-line leading-relaxed transition-colors">${modelo}</div>
+                    </div>
+                `;
+            } else {
+                let modeloInvalido = dados.modelo_curriculo || 'Nome | Contato\nResumo Profissional\nExperiências';
+                html = `
+                    <div class="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl text-amber-800 dark:text-amber-300 transition-colors">
+                        <p class="font-bold text-base mb-1 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation"></i> Currículo Inválido ou em Branco</p>
+                        <p class="text-sm mb-2">${dados.mensagem}</p>
+                        <p class="text-xs text-amber-700 dark:text-amber-400/90 mb-4"><strong>Sugestão Prática:</strong> ${dados.sugestao}</p>
+                        
+                        <div class="mt-4 p-4 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl transition-colors">
+                            <p class="font-bold text-xs uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2"><i class="fa-solid fa-file-lines mr-1"></i> Guia Prático: Estrutura Base ATS-Friendly</p>
+                            <div class="bg-white dark:bg-zinc-900 p-4 rounded-lg text-xs font-mono text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800/50 select-all whitespace-pre-line leading-relaxed transition-colors">${modeloInvalido}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            conteudo.innerHTML = html;
+            container.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
